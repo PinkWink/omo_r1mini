@@ -11,6 +11,8 @@
   <url type="website">http://omorobot.com</url>
   <url type="forum">http://omorobot1.synology.me</url>
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
   <depend>rospy</depend>
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
@@ -18,7 +20,10 @@
   <depend>tf</depend>
   <depend>usb_cam</depend>
   <depend>omo_r1mini_description</depend>
+  <build_export_depend>std_msgs</build_export_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>rosserial_python</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 </package>

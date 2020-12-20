@@ -17,13 +17,25 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   tf
   usb_cam
+  message_generation
   #omo_r1mini_description
 )
+
+add_service_files(
+  FILES
+  Battery.srv
+)
+
 
 ################################################################################
 # Setup for python modules and scripts
 ################################################################################
 catkin_python_setup()
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ################################################################################
 # Declare ROS messages, services and actions
