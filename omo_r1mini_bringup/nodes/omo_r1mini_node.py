@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# original source code -> https://github.com/omorobot/omoros
-# modified by Bishop Pearson
-
 import sys
 import rospy
 import serial
@@ -28,9 +25,9 @@ class PacketHandler:
                                        line_buffering = True)
 
       self.robot_state = {
-            "VW" : [0., 0.],
-            "DIFFV" : [0., 0.],
             "ENCOD" : [0., 0.],
+            "DIFFV" : [0., 0.],
+            "ODO" : [0., 0.],
             "ACCL" : [0., 0., 0.],
             "GYRO" : [0., 0., 0.],
             "BAT" : [0., 0., 0.],
@@ -78,7 +75,7 @@ class PacketHandler:
             rospy.logwarn("ValueError occupied in parser_R1mini. %s ", raw_data_o)
 
    def set_periodic_info(self):
-      target_info = ['ENCOD', 'DIFFV', 'VW', 'ACCL', 'GYRO']
+      target_info = ['ODO', 'DIFFV', 'ENCOD', 'ACCL', 'GYRO']
       for idx, each in enumerate(target_info):
          self.write_port("$cREGI," + str(idx) + "," + each)
 
@@ -88,9 +85,9 @@ class PacketHandler:
 
    def stop_periodic_comm(self):
       self.write_port("$cPEEN,0")
-      sleep(0.1)
+      sleep(0.01)
       self.write_port("$cODO,0")
-      sleep(0.1)
+      sleep(0.01)
 
    def set_wheel_velocity(self, l_vel, r_vel):
       self.write_port('$cDIFFV,{:.0f},{:.0f}'.format(l_vel, r_vel))
@@ -107,14 +104,46 @@ class OMOR1miniNode:
       self.max_lin_vel_x = 1.2
       self.max_ang_vel_z = 1.0
 
+      self.is_odo_offset_set = False
+      self.odo_offset_left, self.odo_offset_right = 0.0, 0.0
+      self.enc_left_tot_prev, self.enc_right_tot_prev = 0.0, 0.0   
+
       rospy.loginfo('Robot GEAR ratio: %s', self.gear_ratio)
       rospy.loginfo('Robot wheel_distance: %s', self.wheel_distance)
       rospy.loginfo('Robot wheel_radius: %s', self.wheel_radius)
 
+      rospy.Service('battery_status', Battery, self.battery_service_handle)
       rospy.Subscriber("cmd_vel", Twist, self.sub_cmd_vel, queue_size=1)
 
+      self.pub_joint_states = rospy.Publisher('joint_states', JointState, queue_size=10)
+      self.odom_pub = rospy.Publisher("odom", Odometry, queue_size=10)
+      self.odom_broadcaster = TransformBroadcaster()
+
+      self.ph.stop_periodic_comm()
+      self.ph.update_battery_state()
+
+      sleep(0.1)
+
+      self.ph.set_periodic_info()
+
+      rospy.loginfo('==> Start R1mini ')
       rospy.Timer(rospy.Duration(0.01), self.update_robot)
 
+   def update_robot(self, event):
+      self.ph.parser_R1mini()
+
+      try:
+         [vel_left_wheel, vel_right_wheel] = self.ph.robot_state['DIFFV']
+         [left_odo, right_odo] = self.ph.robot_state['ODO']
+         [left_enc, right_enc] = self.ph.robot_state['ENCOD']
+      except ValueError:
+         rospy.logwarn("ValueError occupied during read robot status in parser_R1mini. %s ", 
+                        self.ph.robot_state)
+
+
+      print self.ph.robot_state
+      print left_odo, right_odo, left_enc, right_enc
+      
    def sub_cmd_vel(self, cmd_vel_msg):
       lin_vel_x = cmd_vel_msg.linear.x
       ang_vel_z = cmd_vel_msg.angular.z
@@ -128,10 +157,6 @@ class OMOR1miniNode:
       self.ph.set_wheel_velocity(vel_l_wheel * self.wheel_radius * 1000, 
                                  vel_r_wheel * self.wheel_radius * 1000)
 
-
-   def update_robot(self, event):
-      self.ph.parser_R1mini()
-
    def battery_service_handle(self, req):
       self.ph.update_battery_state()
 
@@ -144,14 +169,7 @@ class OMOR1miniNode:
       else:
          rospy.logwarn("Battery Status is not correct.")
 
-   def battery_status_server(self):
-      bat_server = rospy.Service('battery_status', Battery, self.battery_service_handle)
-
    def main(self):
-      self.ph.stop_periodic_comm()
-      self.ph.update_battery_state()
-      self.ph.set_periodic_info()
-      self.battery_status_server()
       rospy.spin()
 
 if __name__ == '__main__':
