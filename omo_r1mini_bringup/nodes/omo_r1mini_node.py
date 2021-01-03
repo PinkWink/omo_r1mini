@@ -25,6 +25,11 @@ class OdomVel(object):
    y = 0.0
    w = 0.0
 
+class Joint(object):
+   joint_name = ['wheel_left_joint', 'wheel_right_joint']
+   joint_pos = [0.0, 0.0]
+   joint_vel = [0.0, 0.0]
+
 class PacketHandler:
    def __init__(self):
       port_name = rospy.get_param('~port', '/dev/ttyMotor')
@@ -36,7 +41,7 @@ class PacketHandler:
                                        line_buffering = True)
 
       self.robot_state = {
-            "POSE" : [0., 0.],
+            "POSE" : [0., 0., 0.],
             "VW" : [0., 0.],
             "ODO" : [0., 0.],
             "ACCL" : [0., 0., 0.],
@@ -85,6 +90,8 @@ class PacketHandler:
          except ValueError:
             rospy.logwarn("ValueError occupied in parser_R1mini. %s ", raw_data_o)
 
+      return raw_data_o
+
    def set_periodic_info(self):
       target_info = ['ODO', 'VW', 'POSE', 'ACCL', 'GYRO']
       for idx, each in enumerate(target_info):
@@ -123,6 +130,7 @@ class OMOR1miniNode:
 
       self.odom_pose = OdomPose()
       self.odom_vel = OdomVel()
+      self.joint = Joint() 
 
       rospy.loginfo('Robot GEAR ratio: %s', self.gear_ratio)
       rospy.loginfo('Robot wheel_base: %s', self.wheel_base)
@@ -180,10 +188,31 @@ class OMOR1miniNode:
       
       self.odom_pub.publish(odom)
 
-      print odo_l, odo_r, theta*180./math.pi, self.odom_vel.x*180./math.pi, self.odom_vel.w*180./math.pi/1000.
+   def updateJointStates(self, odo_l, odo_r, trans_vel, orient_vel):
+      odo_l /= 1000.
+      odo_r /= 1000.
+
+      wheel_ang_left = odo_l / self.wheel_radius
+      wheel_ang_right = odo_r / self.wheel_radius
+
+      wheel_ang_vel_left = (trans_vel - (self.wheel_base / 2.0) * orient_vel) / self.wheel_radius
+      wheel_ang_vel_right = (trans_vel + (self.wheel_base / 2.0) * orient_vel) / self.wheel_radius
+
+      self.joint.joint_pos = [wheel_ang_left, wheel_ang_right]
+      self.joint.joint_vel = [wheel_ang_vel_left, wheel_ang_vel_right]
+
+      joint_states = JointState()
+      joint_states.header.frame_id = "base_link"
+      joint_states.header.stamp = rospy.Time.now()
+      joint_states.name = self.joint.joint_name
+      joint_states.position = self.joint.joint_pos
+      joint_states.velocity = self.joint.joint_vel
+      joint_states.effort = []
+
+      self.pub_joint_states.publish(joint_states)
 
    def update_robot(self, event):
-      self.ph.parser_R1mini()
+      raw_data = self.ph.parser_R1mini()
 
       try:
          [trans_vel, orient_vel] = self.ph.robot_state['VW']
@@ -193,9 +222,11 @@ class OMOR1miniNode:
          [angle_x, angle_y, angle_z] = self.ph.robot_state['POSE']
 
          self.update_odometry(odo_l, odo_r, trans_vel, orient_vel)
+         self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
 
       except ValueError:
-         rospy.logwarn("ValueError occupied during read robot status in update_robot state. %s ", 
+         rospy.logwarn("ValueError occupied during read robot status in update_robot state. \n\r Raw_data : %s \n\r Robot state : %s", 
+                        raw_data,
                         self.ph.robot_state)
       
    def sub_cmd_vel(self, cmd_vel_msg):
