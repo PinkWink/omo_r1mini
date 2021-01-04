@@ -2,10 +2,9 @@
 
 import sys
 import rospy
-import serial
-import io
 import math
 from time import sleep
+from omo_packet_handler import PacketHandler
 
 from sensor_msgs.msg import Imu, JointState
 from nav_msgs.msg import Odometry
@@ -13,6 +12,8 @@ from geometry_msgs.msg import Twist, Pose, Point, Vector3, Quaternion
 from tf.broadcaster import TransformBroadcaster
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 from omo_r1mini_bringup.srv import Battery, BatteryResponse
+from omo_r1mini_bringup.srv import Color, ColorResponse
+from omo_r1mini_bringup.srv import SaveColor, SaveColorResponse
 
 class OdomPose(object):
    x = 0.0
@@ -29,86 +30,6 @@ class Joint(object):
    joint_name = ['wheel_left_joint', 'wheel_right_joint']
    joint_pos = [0.0, 0.0]
    joint_vel = [0.0, 0.0]
-
-class PacketHandler:
-   def __init__(self):
-      port_name = rospy.get_param('~port', '/dev/ttyMotor')
-      baud_rate = rospy.get_param('~baud', 115200)
-
-      self.ser = serial.Serial(port_name, baud_rate)
-      self.ser_io = io.TextIOWrapper(io.BufferedRWPair(self.ser, self.ser, 1), 
-                                       newline = '\r', 
-                                       line_buffering = True)
-
-      self.robot_state = {
-            "POSE" : [0., 0., 0.],
-            "VW" : [0., 0.],
-            "ODO" : [0., 0.],
-            "ACCL" : [0., 0., 0.],
-            "GYRO" : [0., 0., 0.],
-            "BAT" : [0., 0., 0.],
-      }
-
-      rospy.loginfo('Serial port: %s', port_name)
-      rospy.loginfo('Serial baud rate: %s', baud_rate)
-
-   def get_port_state(self):
-      return self.ser.isOpen()
-
-   def read_port(self):
-      return self.ser_io.readline()
-
-   def write_port(self, buffer):
-      if self.get_port_state() == True:
-         self.ser.write(buffer + "\r\n")
-      else:
-         rospy.logwarn('Serial Port %s is not Opened in Writing process', port_name)
-
-   def read_packet(self):
-      if self.get_port_state() == True:
-         return self.read_port()
-      else:
-         rospy.logwarn('Serial Port %s is not Opened in Reading process', port_name)
-
-   def update_battery_state(self):
-      self.write_port("$qBAT")
-      sleep(0.01)
-
-   def parser_R1mini(self):
-      raw_data_o = self.read_packet()
-
-      raw_data = raw_data_o.replace('\r', '')
-      raw_data = raw_data.replace('\n', '')
-      raw_data = raw_data.split('#')
-
-      raw_data_split = raw_data[-1].split(',')
-      key = raw_data_split[0]
-
-      if key in list(self.robot_state.keys()):
-         try:
-            self.robot_state[key] = [float(each) for each in raw_data_split[1:]]
-         except ValueError:
-            rospy.logwarn("ValueError occupied in parser_R1mini. %s ", raw_data_o)
-
-      return raw_data_o
-
-   def set_periodic_info(self):
-      target_info = ['ODO', 'VW', 'POSE', 'ACCL', 'GYRO']
-      for idx, each in enumerate(target_info):
-         self.write_port("$cREGI," + str(idx) + "," + each)
-
-      self.update_battery_state()
-      self.write_port("$cPERI,20")
-      self.write_port("$cPEEN,1")
-
-   def stop_periodic_comm(self):
-      self.write_port("$cPEEN,0")
-      sleep(0.01)
-      self.write_port("$cODO,0")
-      sleep(0.01)
-
-   def set_wheel_velocity(self, l_vel, r_vel):
-      self.write_port('$cVW,{:.0f},{:.0f}'.format(l_vel, r_vel))
 
 class OMOR1miniNode:
    def __init__(self):
@@ -139,6 +60,8 @@ class OMOR1miniNode:
       rospy.loginfo('Robot distance_per_pulse: %s', self.distance_per_pulse)
 
       rospy.Service('battery_status', Battery, self.battery_service_handle)
+      rospy.Service('set_led_color', Color, self.led_color_service_handle)
+      rospy.Service('save_led_color', Color, self.save_led_color_service_handle)
       rospy.Subscriber("cmd_vel", Twist, self.sub_cmd_vel, queue_size=1)
 
       self.pub_joint_states = rospy.Publisher('joint_states', JointState, queue_size=10)
@@ -249,6 +172,16 @@ class OMOR1miniNode:
          return BatteryResponse(volt, SOC, current)
       else:
          rospy.logwarn("Battery Status is not correct.")
+
+   def led_color_service_handle(self, req):
+      command = "$cCOLOR," + str(req.red) + ',' + str(req.green) + ',' + str(req.blue)
+      self.ph.write_port(command)
+      return ColorResponse()
+
+   def save_led_color_service_handle(self, req):
+      command = "$sCOLOR," + str(req.red) + ',' + str(req.green) + ',' + str(req.blue)
+      self.ph.write_port(command)
+      return ColorResponse()
 
    def main(self):
       rospy.spin()

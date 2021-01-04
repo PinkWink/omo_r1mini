@@ -24,6 +24,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   Battery.srv
+  Color.srv
+  SaveColor.srv
 )
 
 
