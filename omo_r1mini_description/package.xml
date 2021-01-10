@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>omo_r1mini_description</name>
+  <version>0.0.1</version>
+  <description>
+    OMO R1mini robot package - robot description
+  </description>
+  <license>Apache 2.0</license>
+  <author email="pinkwink@omorobot.com">PinkWink</author>
+  <maintainer email="pinkwink@omorobot.com">PinkWink</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>urdf</depend>
+  <depend>xacro</depend>
+</package>
