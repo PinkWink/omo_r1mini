@@ -38,6 +38,10 @@
     <color rgba="0.8 0.0 0.0 1.0"/>
   </material>
 
+  <material name="pink">
+    <color rgba="${255/255} ${20/255} ${147/255} 1.0"/>
+  </material>
+
   <material name="white">
     <color rgba="1.0 1.0 1.0 1.0"/>
   </material>

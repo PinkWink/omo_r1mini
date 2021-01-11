@@ -17,6 +17,10 @@
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
+  <gazebo reference="housing_link">
+    <material>Gazebo/PurpleGlow</material>
+  </gazebo>
+
   <gazebo reference="caster_back_link">
     <mu1>0</mu1>
     <mu2>0</mu2>
