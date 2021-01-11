@@ -1,53 +1,25 @@
 <?xml version="1.0"?>
 <robot name="omo_r1_sim" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find omo_r1mini_description)/urdf/r1mini.urdf.xacro"/>
-  <xacro:arg name="laser_visual"  default="false"/>
+  <xacro:arg name="laser_visual"  default="true"/>
   <xacro:arg name="camera_visual" default="false"/>
-  <xacro:arg name="imu_visual"    default="false"/>
+  <xacro:arg name="imu_visual"    default="true"/>
 
   <gazebo reference="base_link">
     <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <gazebo reference="wheel_left_link">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-    <kp>50000.0</kp>
-    <kd>1.0</kd>
-    <minDepth>0.001</minDepth>
-    <maxVel>1.2</maxVel>
-    <fdir1>1 0 0</fdir1>
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
   <gazebo reference="wheel_right_link">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-    <kp>50000.0</kp>
-    <kd>1.0</kd>
-    <minDepth>0.001</minDepth>
-    <maxVel>1.2</maxVel>
-    <fdir1>1 0 0</fdir1>
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
-  <gazebo reference="caster_back_right_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
-    <kp>10000.0</kp>
-    <kd>10.0</kd>
-    <minDepth>0.001</minDepth>
-    <maxVel>1.0</maxVel>
-    <material>Gazebo/FlatBlack</material>
-  </gazebo>
-
-  <gazebo reference="caster_back_left_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
-    <kp>10000.0</kp>
-    <kd>10.0</kd>
-    <minDepth>0.001</minDepth>
-    <maxVel>1.0</maxVel>
+  <gazebo reference="caster_back_link">
+    <mu1>0</mu1>
+    <mu2>0</mu2>
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
