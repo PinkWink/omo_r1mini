@@ -8,16 +8,16 @@ node [shape=box];
 "wheel_left_link" [label="wheel_left_link"];
 "wheel_right_link" [label="wheel_right_link"];
 node [shape=ellipse, color=blue, fontcolor=blue];
-"base_footprint" -> "base_joint" [label="xyz: 0 0 0.0115 \nrpy: 0 -0 0"]
+"base_footprint" -> "base_joint" [label="xyz: 0 0 0.0335 \nrpy: 0 -0 0"]
 "base_joint" -> "base_link"
-"base_link" -> "caster_back_joint" [label="xyz: -0.12 0 0 \nrpy: 0 -0 0"]
+"base_link" -> "caster_back_joint" [label="xyz: -0.12 0 -0.018 \nrpy: 0 -0 0"]
 "caster_back_joint" -> "caster_back_link"
 "base_link" -> "imu_joint" [label="xyz: 0 0 0.038 \nrpy: 0 -0 0"]
 "imu_joint" -> "imu_link"
-"base_link" -> "scan_joint" [label="xyz: 0 0 0.13 \nrpy: 0 -0 3.14159"]
+"base_link" -> "scan_joint" [label="xyz: 0 0 0.05 \nrpy: 0 -0 3.14159"]
 "scan_joint" -> "base_scan"
-"base_link" -> "wheel_left_joint" [label="xyz: 0 0.096 0.022 \nrpy: 0 -0 0"]
+"base_link" -> "wheel_left_joint" [label="xyz: 0 0.096 0 \nrpy: 0 -0 0"]
 "wheel_left_joint" -> "wheel_left_link"
-"base_link" -> "wheel_right_joint" [label="xyz: 0 -0.096 0.022 \nrpy: 0 -0 0"]
+"base_link" -> "wheel_right_joint" [label="xyz: 0 -0.096 0 \nrpy: 0 -0 0"]
 "wheel_right_joint" -> "wheel_right_link"
 }
