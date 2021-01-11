@@ -60,7 +60,7 @@
   </gazebo>
 
   <gazebo>
-    <plugin name="omo_r1_controller" filename="libgazebo_ros_diff_drive.so">
+    <plugin name="omo_r1mini_controller" filename="libgazebo_ros_diff_drive.so">
       <commandTopic>cmd_vel</commandTopic>
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
@@ -74,8 +74,8 @@
       <updateRate>30</updateRate>
       <leftJoint>wheel_left_joint</leftJoint>
       <rightJoint>wheel_right_joint</rightJoint>
-      <wheelSeparation>0.591</wheelSeparation>
-      <wheelDiameter>0.220</wheelDiameter>
+      <wheelSeparation>0.17</wheelSeparation>
+      <wheelDiameter>0.0675</wheelDiameter>
       <wheelAcceleration>1</wheelAcceleration>
       <wheelTorque>100</wheelTorque>
       <rosDebugLevel>na</rosDebugLevel>

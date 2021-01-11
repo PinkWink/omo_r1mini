@@ -1,19 +1,18 @@
 <?xml version="1.0" ?>
 <robot name="r1mini" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:include filename="$(find omo_r1mini_description)/urdf/common_properties.xacro"/>
-  <xacro:include filename="$(find omo_r1mini_description)/urdf/r1mini.gazebo.xacro"/>
-
+<!--   <xacro:include filename="$(find omo_r1mini_description)/urdf/common_properties.xacro"/>
+ -->
   <link name="base_footprint"/>
 
   <joint name="base_joint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link" />
-    <origin xyz="0 0.0 0.0115" rpy="0 0 0.0"/>
+    <origin xyz="0 0 0.0335" rpy="0 0 0.0"/>
   </joint>
 
   <link name="base_link">
     <visual>
-      <origin xyz="0.03 -0.065 0.0" rpy="0 0 1.57"/>
+      <origin xyz="0.03 -0.065 -0.022" rpy="0 0 1.57"/>
       <geometry>
         <mesh filename="package://omo_r1mini_description/meshes/bases/mini_frame.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -21,7 +20,7 @@
     </visual>
 
     <collision>
-      <origin xyz="0.03 -0.065 0.0" rpy="0 0 1.57"/>
+      <origin xyz="0.03 -0.065 -0.022" rpy="0 0 1.57"/>
       <geometry>
         <mesh filename="package://omo_r1mini_description/meshes/bases/mini_frame.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -39,7 +38,7 @@
   <joint name="wheel_left_joint" type="continuous">
     <parent link="base_link"/>
     <child link="wheel_left_link"/>
-    <origin xyz="0.0 0.096 0.022" rpy="0.0 0.0 0"/>
+    <origin xyz="0.0 0.096 0.0" rpy="0.0 0.0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
@@ -71,7 +70,7 @@
   <joint name="wheel_right_joint" type="continuous">
     <parent link="base_link"/>
     <child link="wheel_right_link"/>
-    <origin xyz="0.0 -0.096 0.022" rpy="0.0 0.0 0"/>
+    <origin xyz="0.0 -0.096 0.0" rpy="0.0 0.0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
@@ -102,7 +101,7 @@
   <joint name="caster_back_joint" type="fixed">
     <parent link="base_link"/>
     <child link="caster_back_link"/>
-    <origin xyz="-0.12 0.0 0.0" rpy="0 0 0"/>
+    <origin xyz="-0.12 0.0 -0.022" rpy="0 0 0"/>
   </joint>
 
   <link name="caster_back_link">
