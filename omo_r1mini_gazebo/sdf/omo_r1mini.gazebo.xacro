@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <robot name="omo_r1_sim" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find omo_r1mini_description)/urdf/r1mini.urdf.xacro"/>
-  <xacro:arg name="laser_visual"  default="true"/>
+  <xacro:arg name="laser_visual"  default="false"/>
   <xacro:arg name="camera_visual" default="false"/>
   <xacro:arg name="imu_visual"    default="true"/>
 
   <gazebo reference="base_link">
-    <material>Gazebo/DarkGrey</material>
+    <material>Gazebo/Indigo</material>
   </gazebo>
 
   <gazebo reference="wheel_left_link">

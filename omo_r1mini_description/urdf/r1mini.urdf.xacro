@@ -16,7 +16,7 @@
       <geometry>
         <mesh filename="package://omo_r1mini_description/meshes/bases/mini_frame.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="blue"/>
+      <material name="dark"/>
     </visual>
 
     <collision>
