@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>omo_r1mini_slam</name>
+  <version>0.0.1</version>
+  <description>
+    OMO R1mini robot package - launchers which uses optimized gmapping parameters.
+  </description>
+  <license>Apache 2.0</license>
+  <author email="pinkwink@omorobot.com">PinkWink</author>
+  <maintainer email="pinkwink@omorobot.com">PinkWink</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>omo_r1mini_bringup</exec_depend>
+  <exec_depend>gmapping</exec_depend>
+</package>

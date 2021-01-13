@@ -51,7 +51,7 @@ class PacketHandler:
       self.write_port("$qBAT")
       sleep(0.01)
 
-   def parser_R1mini(self):
+   def parser(self):
       raw_data_o = self.read_packet()
 
       raw_data = raw_data_o.replace('\r', '')

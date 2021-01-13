@@ -135,7 +135,7 @@ class OMOR1miniNode:
       self.pub_joint_states.publish(joint_states)
 
    def update_robot(self, event):
-      raw_data = self.ph.parser_R1mini()
+      raw_data = self.ph.parser()
 
       try:
          [trans_vel, orient_vel] = self.ph.robot_state['VW']
