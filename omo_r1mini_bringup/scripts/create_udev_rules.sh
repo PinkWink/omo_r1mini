@@ -1,27 +1,27 @@
 #!/bin/bash
 
 echo ""
-echo "This script copies OMO R1 udev rules to /etc/udev/rules.d/"
+echo "This script copies OMO R1mini udev rules to /etc/udev/rules.d/"
 echo ""
 
 echo "Motor Driver (USB Serial from RS232) : /dev/ttyUSBx to /dev/ttyMotor :"
-if [ -f "/etc/udev/rules.d/98-omo-r1.rules" ]; then
-    echo "98-omo-r1.rules file already exist."
+if [ -f "/etc/udev/rules.d/98-omo-r1mini.rules" ]; then
+    echo "98-omo-r1mini.rules file already exist."
 else 
-    echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE:="0666", GROUP:="dialout", SYMLINK+="ttyMotor"' > /etc/udev/rules.d/98-omo-r1.rules
+    echo 'KERNEL=="ttyTHS*", MODE:="0666"' > /etc/udev/rules.d/98-omo-r1mini.rules
     
-    echo '98-omo-r1.rules created'
+    echo '98-omo-r1mini.rules created'
 fi
 
-echo ""
-echo "OpenCR IMU (USB Serial) : /dev/ttyACMx to /dev/imu :"
-if [ -f "/etc/udev/rules.d/99-opencr-cdc.rules" ]; then
-    echo "99-opencr-cdc.rules file already exist."
-else 
-    echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0483" ATTRS{idProduct}=="5740", MODE:="0666", GROUP:="dialout", SYMLINK+="ttyIMU" ' > /etc/udev/rules.d/99-opencr-cdc.rules
-
-    echo '99-opencr-cdc.rules created'
-fi
+#echo ""
+#echo "OpenCR IMU (USB Serial) : /dev/ttyACMx to /dev/imu :"
+#if [ -f "/etc/udev/rules.d/99-opencr-cdc.rules" ]; then
+#    echo "99-opencr-cdc.rules file already exist."
+#else 
+#    echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0483" ATTRS{idProduct}=="5740", MODE:="0666", GROUP:="dialout", SYMLINK+="ttyIMU" ' > /etc/udev/rules.d/99-opencr-cdc.rules
+#
+#    echo '99-opencr-cdc.rules created'
+#fi
 
 echo ""
 echo "YD LiDAR (USB Serial) : /dev/ttyUSBx to /dev/ttyLiDAR :"
