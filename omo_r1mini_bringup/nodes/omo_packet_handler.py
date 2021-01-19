@@ -16,7 +16,7 @@ class PacketHandler:
                                        line_buffering = True)
 
       self.robot_state = {
-            "POSE" : [0., 0., 0.],
+            "ENCOD" : [0., 0.],
             "VW" : [0., 0.],
             "ODO" : [0., 0.],
             "ACCL" : [0., 0., 0.],
@@ -53,6 +53,7 @@ class PacketHandler:
 
    def parser(self):
       raw_data_o = self.read_packet()
+      print raw_data_o
 
       raw_data = raw_data_o.replace('\r', '')
       raw_data = raw_data.replace('\n', '')
@@ -74,7 +75,7 @@ class PacketHandler:
          self.write_port("$cREGI," + str(idx) + "," + each)
 
       self.update_battery_state()
-      self.write_port("$cPERI,20")
+      self.write_port("$cPERI,50")
       self.write_port("$cPEEN,1")
 
    def stop_periodic_comm(self):

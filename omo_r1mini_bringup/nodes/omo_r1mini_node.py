@@ -44,10 +44,18 @@ class OMOR1miniNode:
       self.max_lin_vel_x = 1.2
       self.max_ang_vel_z = 1.0
 
-      self.distance_per_pulse = 2*math.pi*self.wheel_radius / self.enc_pulse / self.gear_ratio
+      self.ph.robot_state = {
+            "ENCOD" : [0., 0.],
+            "VW" : [0., 0.],
+            "ODO" : [0., 0.],
+            "ACCL" : [0., 0., 0.],
+            "GYRO" : [0., 0., 0.],
+            "BAT" : [0., 0., 0.],
+      }
 
-      self.is_enc_offset_reset = False
-      self.left_enc_bias, self.right_enc_bias = 0., 0.
+      self.ph.incomming_info = ['ODO', 'VW', 'ENCOD', 'ACCL', 'GYRO']
+
+      self.distance_per_pulse = 2*math.pi*self.wheel_radius / self.enc_pulse / self.gear_ratio
 
       self.odom_pose = OdomPose()
       self.odom_vel = OdomVel()
@@ -79,6 +87,8 @@ class OMOR1miniNode:
       self.odom_pose.timestamp = rospy.Time.now().to_nsec()
 
    def update_odometry(self, odo_l, odo_r, trans_vel, orient_vel):
+      print self.ph.robot_state['ENCOD'], self.ph.robot_state['ODO']
+
       odo_l /= 1000.
       odo_r /= 1000.
       theta = (odo_r - odo_l) / self.wheel_base
@@ -142,7 +152,8 @@ class OMOR1miniNode:
          [odo_l, odo_r] = self.ph.robot_state['ODO']
          [gyro_x, gyro_y, gyro_z] = self.ph.robot_state['GYRO']
          [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
-         [angle_x, angle_y, angle_z] = self.ph.robot_state['POSE']
+         if 'POSE' in self.ph.robot_state.keys():
+            [angle_x, angle_y, angle_z] = self.ph.robot_state['POSE']
 
          self.update_odometry(odo_l, odo_r, trans_vel, orient_vel)
          self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
