@@ -1,10 +1,8 @@
 <launch>
   <arg name="set_port" default="/dev/ttyTHS1"/>
-  <arg name="set_odom_mode" default="wheel_only"/>
-  <node pkg="omo_r1mini_bringup" type="omo_r1mini_node.py" name="omo_r1mini_node" output="screen">
+  <node pkg="omo_r1mini_bringup" type="motor_vs.py" name="omo_r1mini_motor_setting" output="screen">
       <param name="port" value="$(arg set_port)"/>
       <param name="baud" value="115200"/>
-      <param name="odom_mode" value="$(arg set_odom_mode)"/>
       <param name="modelName" value="r1mini"/>
   </node>
   <rosparam command="load" file="$(find omo_r1mini_bringup)/config/motor_spec.yaml" />

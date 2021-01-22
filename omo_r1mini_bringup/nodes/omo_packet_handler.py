@@ -33,7 +33,10 @@ class PacketHandler:
       return self.ser.isOpen()
 
    def read_port(self):
-      return self.ser_io.readline()
+      try:
+         return self.ser_io.readline()
+      except UnicodeDecodeError:
+         rospy.logwarn('UnicodeDecodeError during serial comm. start byte')
 
    def write_port(self, buffer):
       if self.get_port_state() == True:
@@ -53,14 +56,16 @@ class PacketHandler:
 
    def parser(self):
       raw_data_o = self.read_packet()
-      print raw_data_o
 
-      raw_data = raw_data_o.replace('\r', '')
-      raw_data = raw_data.replace('\n', '')
-      raw_data = raw_data.split('#')
+      try:
+         raw_data = raw_data_o.replace('\r', '')
+         raw_data = raw_data.replace('\n', '')
+         raw_data = raw_data.split('#')
 
-      raw_data_split = raw_data[-1].split(',')
-      key = raw_data_split[0]
+         raw_data_split = raw_data[-1].split(',')
+         key = raw_data_split[0]
+      except AttributeError:
+         rospy.logwarn("AttributeError: 'NoneType' object has no attribute 'replace' : %s ")
 
       if key in list(self.robot_state.keys()):
          try:
@@ -75,7 +80,9 @@ class PacketHandler:
          self.write_port("$cREGI," + str(idx) + "," + each)
 
       self.update_battery_state()
-      self.write_port("$cPERI,50")
+      self.write_port("$cPERI,100")
+      sleep(0.01)
+      self.write_port("$ENCOD,0")
       self.write_port("$cPEEN,1")
 
    def stop_periodic_comm(self):
