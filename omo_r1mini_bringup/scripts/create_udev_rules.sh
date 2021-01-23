@@ -8,20 +8,10 @@ echo "Motor Driver (USB Serial from RS232) : /dev/ttyUSBx to /dev/ttyMotor :"
 if [ -f "/etc/udev/rules.d/98-omo-r1mini.rules" ]; then
     echo "98-omo-r1mini.rules file already exist."
 else 
-    echo 'KERNEL=="ttyTHS*", MODE:="0666"' > /etc/udev/rules.d/98-omo-r1mini.rules
+    echo 'KERNEL=="ttyTHS1", MODE:="0666", GROUP:="dialout"' > /etc/udev/rules.d/98-omo-r1mini.rules
     
     echo '98-omo-r1mini.rules created'
 fi
-
-#echo ""
-#echo "OpenCR IMU (USB Serial) : /dev/ttyACMx to /dev/imu :"
-#if [ -f "/etc/udev/rules.d/99-opencr-cdc.rules" ]; then
-#    echo "99-opencr-cdc.rules file already exist."
-#else 
-#    echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0483" ATTRS{idProduct}=="5740", MODE:="0666", GROUP:="dialout", SYMLINK+="ttyIMU" ' > /etc/udev/rules.d/99-opencr-cdc.rules
-#
-#    echo '99-opencr-cdc.rules created'
-#fi
 
 echo ""
 echo "YD LiDAR (USB Serial) : /dev/ttyUSBx to /dev/ttyLiDAR :"
@@ -32,6 +22,17 @@ else
     
     echo 'ydlidar.rules created'
 fi
+
+echo ""
+echo "USB0 setting"
+if [ -f "/etc/udev/rules.d/USB0_setting.rules" ]; then
+    echo "USB0_setting.rules file already exist."
+else 
+    echo 'KERNEL=="ttyUSB0", MODE:="0666", GROUP:="dialout"' >/etc/udev/rules.d/96-USB0_setting.rules
+    
+    echo 'USB0_setting.rules created'
+fi
+
 
 # if [ -f "/etc/udev/rules.d/ydlidar-V2.rules" ]; then
 #     echo "ydlidar-V2.rules file already exist."
