@@ -49,13 +49,14 @@ class OMOR1miniNode:
             "BAT" : [0., 0., 0.],
         } 
 
-        self.ph.incomming_info = ['ODO', 'VW', 'POSE', 'ACCL', 'GYRO']
+        #self.ph.incomming_info = ['ODO', 'VW', 'POSE', 'ACCL', 'GYRO']
+        self.ph.incomming_info = ['ODO', 'VW']
 
         self.odom_pose = OdomPose()
         self.odom_vel = OdomVel()
         self.joint = Joint() 
 
-        self.gear_ratio = rospy.get_param("/motor_spec/gear_ratio")/10
+        self.gear_ratio = rospy.get_param("/motor_spec/gear_ratio")/10.
         self.wheel_base = rospy.get_param("/motor_spec/wheel_base")
         self.wheel_radius = rospy.get_param("/motor_spec/wheel_radius")
         self.enc_pulse = rospy.get_param("/motor_spec/enc_pulse")
@@ -75,6 +76,7 @@ class OMOR1miniNode:
 
         self.pub_joint_states = rospy.Publisher('joint_states', JointState, queue_size=10)
         self.odom_pub = rospy.Publisher("odom", Odometry, queue_size=10)
+        self.odom_broadcaster = TransformBroadcaster()
 
         self.ph.ser.flushInput()
         self.ph.stop_periodic_comm()
@@ -117,6 +119,11 @@ class OMOR1miniNode:
         odom = Odometry()
         odom.header.frame_id = "odom"
         odom.child_frame_id = "base_footprint"
+
+        self.odom_broadcaster.sendTransform((self.odom_pose.x, self.odom_pose.y, 0.), 
+                                                odom_orientation_quat, self.odom_pose.timestamp, 
+                                                odom.child_frame_id, odom.header.frame_id)
+      
         odom.header.stamp = rospy.Time.now()
         odom.pose.pose = Pose(Point(self.odom_pose.x, self.odom_pose.y, 0.), Quaternion(*odom_orientation_quat))
         odom.twist.twist = Twist(Vector3(self.odom_vel.x, self.odom_vel.y, 0), Vector3(0, 0, self.odom_vel.w))
@@ -152,9 +159,9 @@ class OMOR1miniNode:
         try:
             [trans_vel, orient_vel] = self.ph.robot_state['VW']
             [odo_l, odo_r] = self.ph.robot_state['ODO']
-            [gyro_x, gyro_y, gyro_z] = self.ph.robot_state['GYRO']
-            [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
-            [angle_x, angle_y, angle_z] = self.ph.robot_state['POSE']
+            # [gyro_x, gyro_y, gyro_z] = self.ph.robot_state['GYRO']
+            # [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
+            # [angle_x, angle_y, angle_z] = self.ph.robot_state['POSE']
 
             self.update_odometry(odo_l, odo_r, trans_vel, orient_vel)
             #self.update_odometry(enc_l, enc_r)
