@@ -1,8 +1,7 @@
 <launch>
   <!-- Arguments -->
   <arg name="map_file" default="$(find omo_r1mini_navigation)/maps/map.yaml"/>
-  <arg name="open_rviz" default="true"/>
-  <arg name="move_forward_only" default="true"/>
+  <arg name="move_forward_only" default="false"/>
 
   <!-- OMO R1 -->
   <include file="$(find omo_r1mini_description)/launch/description.launch"/>
