@@ -5,7 +5,7 @@
   <arg name="move_forward_only" default="true"/>
 
   <!-- OMO R1 -->
-  <include file="$(find omo_r1mini_bringup)/launch/omo_r1mini_remote.launch"/>
+  <include file="$(find omo_r1mini_description)/launch/description.launch"/>
 
   <!-- Map server -->
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
