@@ -95,8 +95,12 @@ class OMOR1miniNode:
         return enc_l * self.distance_per_pulse, enc_r * self.distance_per_pulse
 
     def update_odometry(self, odo_l, odo_r, trans_vel, orient_vel):
+        odo_l /= 1000.
+        odo_r /= 1000.
         trans_vel /= 1000.
         orient_vel /= 1000.
+
+        rospy.loginfo('R1mini state : wheel pos %s, %s, speed %s, %s', odo_l, odo_r, trans_vel, orient_vel)
 
         self.odom_pose.timestamp = rospy.Time.now()
         dt = (self.odom_pose.timestamp - self.odom_pose.pre_timestamp).to_sec()
