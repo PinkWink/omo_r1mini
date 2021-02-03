@@ -32,10 +32,49 @@ class Joint(object):
     joint_pos = [0.0, 0.0]
     joint_vel = [0.0, 0.0]
 
+class ComplementaryFilter():
+    def __init__(self):
+        self.theta = 0.
+        self.pre_theta = 0.
+        self.wheel_ang = 0.
+        self.filter_coef = 0.9
+        self.gyro_bias = 0.
+        self.count_for_gyro_bias = 110
+
+    def gyro_calibration(self, gyro):
+        self.count_for_gyro_bias -= 1
+
+        if self.count_for_gyro_bias > 100:
+            return "Prepare for gyro_calibration"
+
+        self.gyro_bias += gyro
+        if self.count_for_gyro_bias == 1:
+            self.gyro_bias /= 100
+            rospy.loginfo('Complete : Gyro calibration')
+            return "gyro_calibration OK"
+
+        return "During gyro_calibration"
+
+    def calc_filter(self, gyro, d_time):
+
+        if self.count_for_gyro_bias != 1:
+            tmp = self.gyro_calibration(gyro)
+            return 0
+
+        gyro -= self.gyro_bias
+
+        self.pre_theta = self.theta
+        temp = -1/self.filter_coef * (-self.wheel_ang + self.pre_theta) + gyro
+        self.theta = self.pre_theta + temp*d_time
+
+        print self.theta*180/3.141, self.wheel_ang*180/3.141, gyro, d_time
+        return self.theta
+
 class OMOR1miniNode:
     def __init__(self):
         self.ph = PacketHandler()
         self.ph.stop_periodic_comm()  
+        self.calc_yaw = ComplementaryFilter()
 
         self.max_lin_vel_x = 1.2
         self.max_ang_vel_z = 1.0
@@ -49,8 +88,7 @@ class OMOR1miniNode:
             "BAT" : [0., 0., 0.],
         } 
 
-        #self.ph.incomming_info = ['ODO', 'VW', 'POSE', 'ACCL', 'GYRO']
-        self.ph.incomming_info = ['ODO', 'VW']
+        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "ACCL"]
 
         self.odom_pose = OdomPose()
         self.odom_vel = OdomVel()
@@ -60,6 +98,7 @@ class OMOR1miniNode:
         self.wheel_base = rospy.get_param("/motor_spec/wheel_base")
         self.wheel_radius = rospy.get_param("/motor_spec/wheel_radius")
         self.enc_pulse = rospy.get_param("/motor_spec/enc_pulse")
+        self.use_gyro = rospy.get_param("/use_imu_during_odom_calc/use_imu")
 
         self.distance_per_pulse = 2*math.pi*self.wheel_radius / self.enc_pulse / self.gear_ratio
 
@@ -94,19 +133,25 @@ class OMOR1miniNode:
     def convert2odo_from_each_wheel(self, enc_l, enc_r):
         return enc_l * self.distance_per_pulse, enc_r * self.distance_per_pulse
 
-    def update_odometry(self, odo_l, odo_r, trans_vel, orient_vel):
+    def update_odometry(self, odo_l, odo_r, trans_vel, orient_vel, vel_z):
         odo_l /= 1000.
         odo_r /= 1000.
         trans_vel /= 1000.
         orient_vel /= 1000.
 
-        rospy.loginfo('R1mini state : wheel pos %s, %s, speed %s, %s', odo_l, odo_r, trans_vel, orient_vel)
-
         self.odom_pose.timestamp = rospy.Time.now()
         dt = (self.odom_pose.timestamp - self.odom_pose.pre_timestamp).to_sec()
         self.odom_pose.pre_timestamp = self.odom_pose.timestamp
 
-        self.odom_pose.theta += orient_vel * dt
+        if self.use_gyro:
+            self.calc_yaw.wheel_ang += orient_vel * dt
+            self.odom_pose.theta = self.calc_yaw.calc_filter(vel_z*math.pi/180., dt)
+            rospy.loginfo('R1mini state : wheel pos %s, %s, robot theta : %s', 
+                            odo_l, odo_r, self.odom_pose.theta*180/math.pi )
+        else:
+            self.odom_pose.theta += orient_vel * dt
+            rospy.loginfo('R1mini state : wheel pos %s, %s, speed %s, %s', 
+                            odo_l, odo_r, trans_vel, orient_vel)
 
         d_x = trans_vel * math.cos(self.odom_pose.theta) 
         d_y = trans_vel * math.sin(self.odom_pose.theta) 
@@ -163,12 +208,10 @@ class OMOR1miniNode:
         try:
             [trans_vel, orient_vel] = self.ph.robot_state['VW']
             [odo_l, odo_r] = self.ph.robot_state['ODO']
-            # [gyro_x, gyro_y, gyro_z] = self.ph.robot_state['GYRO']
-            # [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
-            # [angle_x, angle_y, angle_z] = self.ph.robot_state['POSE']
+            [vel_x, vel_y, vel_z] = self.ph.robot_state['GYRO']
+            [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
 
-            self.update_odometry(odo_l, odo_r, trans_vel, orient_vel)
-            #self.update_odometry(enc_l, enc_r)
+            self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, vel_z)
             self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
 
         except ValueError:

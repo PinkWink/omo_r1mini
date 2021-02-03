@@ -5,5 +5,5 @@
       <param name="baud" value="115200"/>
       <param name="modelName" value="r1mini"/>
   </node>
-  <rosparam command="load" file="$(find omo_r1mini_bringup)/config/motor_spec.yaml" />
+  <rosparam command="load" file="$(find omo_r1mini_bringup)/config/robot_config.yaml" />
 </launch>

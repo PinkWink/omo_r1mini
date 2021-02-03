@@ -15,6 +15,8 @@ class PacketHandler:
                                        newline = '\r', 
                                        line_buffering = True)
 
+      self.stop_periodic_comm()
+
       self.robot_state = {
             "ENCOD" : [0., 0.],
             "VW" : [0., 0.],
@@ -25,7 +27,7 @@ class PacketHandler:
       }
 
       self.incomming_info = ['ODO', 'VW', 'POSE', 'ACCL', 'GYRO']
-
+      
       rospy.loginfo('Serial port: %s', port_name)
       rospy.loginfo('Serial baud rate: %s', baud_rate)
 

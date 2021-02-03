@@ -3,3 +3,6 @@ motor_spec:
     wheel_base : 0.17
     wheel_radius : 0.03375
     enc_pulse : 44
+
+use_imu_during_odom_calc:
+    use_imu : True
