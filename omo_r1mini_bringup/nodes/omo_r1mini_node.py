@@ -37,7 +37,7 @@ class ComplementaryFilter():
         self.theta = 0.
         self.pre_theta = 0.
         self.wheel_ang = 0.
-        self.filter_coef = 0.9
+        self.filter_coef = 2.5
         self.gyro_bias = 0.
         self.count_for_gyro_bias = 110
 
@@ -67,7 +67,7 @@ class ComplementaryFilter():
         temp = -1/self.filter_coef * (-self.wheel_ang + self.pre_theta) + gyro
         self.theta = self.pre_theta + temp*d_time
 
-        print self.theta*180/3.141, self.wheel_ang*180/3.141, gyro, d_time
+        #print self.theta*180/3.141, self.wheel_ang*180/3.141, gyro, d_time
         return self.theta
 
 class OMOR1miniNode:
@@ -99,6 +99,7 @@ class OMOR1miniNode:
         self.wheel_radius = rospy.get_param("/motor_spec/wheel_radius")
         self.enc_pulse = rospy.get_param("/motor_spec/enc_pulse")
         self.use_gyro = rospy.get_param("/use_imu_during_odom_calc/use_imu")
+        self.calc_yaw.filter_coef = rospy.get_param("/use_imu_during_odom_calc/complementary_filter_coef")
 
         self.distance_per_pulse = 2*math.pi*self.wheel_radius / self.enc_pulse / self.gear_ratio
 
@@ -146,8 +147,10 @@ class OMOR1miniNode:
         if self.use_gyro:
             self.calc_yaw.wheel_ang += orient_vel * dt
             self.odom_pose.theta = self.calc_yaw.calc_filter(vel_z*math.pi/180., dt)
-            rospy.loginfo('R1mini state : wheel pos %s, %s, robot theta : %s', 
-                            odo_l, odo_r, self.odom_pose.theta*180/math.pi )
+            rospy.loginfo('R1mini state : whl pos %1.2f, %1.2f, gyro : %1.2f, whl odom : %1.2f, robot theta : %1.2f', 
+                            odo_l, odo_r, vel_z,
+                            self.calc_yaw.wheel_ang*180/math.pi, 
+                            self.odom_pose.theta*180/math.pi )
         else:
             self.odom_pose.theta += orient_vel * dt
             rospy.loginfo('R1mini state : wheel pos %s, %s, speed %s, %s', 
