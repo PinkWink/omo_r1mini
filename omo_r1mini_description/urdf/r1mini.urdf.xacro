@@ -45,14 +45,14 @@
     <visual>
       <origin xyz="-0.028 0 -0.028" rpy="0 0 1.57"/>
       <geometry>
-        <mesh filename="package://omo_r1mini_description/meshes/bases/mini_housing lite 2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://omo_r1mini_description/meshes/bases/r1mini housing lite 2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="pink"/>
     </visual>
     <collision>
       <origin xyz="-0.028 0 -0.028" rpy="0 0 1.57"/>
       <geometry>
-        <mesh filename="package://omo_r1mini_description/meshes/bases/mini_housing.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://omo_r1mini_description/meshes/bases/r1mini housing lite 2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
