@@ -7,14 +7,14 @@
   </include>
 
   <group if="$(arg use_hlds)">
+    <include file="$(find omo_r1mini_bringup)/launch/omo_r1mini_lidar_hlds.launch" />
+  </group>
+
+  <group unless="$(arg use_hlds)">
     <include file="$(find omo_r1mini_bringup)/launch/omo_r1mini_lidar.launch">
       <arg name="set_frame_id" value="$(arg set_lidar_frame_id)"/>
       <arg name="set_port" value="$(arg set_port_lidar)"/>
     </include>
-  </group>
-
-  <group unless="$(arg use_hlds)">
-    <include file="$(find omo_r1mini_bringup)/launch/omo_r1mini_lidar_hlds.launch" />
   </group>
 
   <!-- <include file="$(find omo_r1mini_bringup)/launch/omo_r1mini_lidar.launch">
