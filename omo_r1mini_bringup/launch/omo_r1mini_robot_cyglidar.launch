@@ -1,0 +1,36 @@
+<launch>
+  <arg name="set_lidar_frame_id" default="base_scan"/>
+  <arg name="set_port_lidar" default="/dev/ttyLiDAR"/>
+
+  <include file="$(find omo_r1mini_bringup)/launch/omo_r1mini_bringup.launch">
+  </include>
+
+  <node pkg="cyglidar_d1" type="cyglidar_pcl_publisher" name="line_laser" output="screen">
+    <param name="port" value="/dev/ttyUSB0"/>
+    <param name="baud_rate" value="3000000"/>
+    <param name="version_num" value="0"/>
+    <param name="frame_id" value="$(arg set_lidar_frame_id)"/>
+    <param name="fixed_frame" value="base_link"/>
+    <remap from="scan" to="cloud_in" />
+  </node>
+
+  <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+      <rosparam>
+        target_frame: base_scan
+        transform_tolerance: 0.01
+        min_height: 0.0
+        max_height: 1.0
+        
+        angle_min: -1.0471973
+        angle_max: 1.0471973
+        angle_increment: 0.01745
+        scan_time: 0.06667
+        range_min: 0.2
+        range_max: 8.0
+        use_inf: true
+        
+        concurrency_level: 1
+      </rosparam>
+
+  </node>
+</launch>
