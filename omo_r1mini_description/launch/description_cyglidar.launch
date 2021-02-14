@@ -1,0 +1,15 @@
+<launch>
+  <arg name="rviz" default='off' />
+
+  <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find omo_r1mini_description)/urdf/r1mini.urdf.cyglidar.xacro'" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="false"/>
+    <param name="rate" value="50"/>
+  </node>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" value=""/>
+  </node>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find omo_r1mini_description)/rviz/model.rviz" if="$(eval rviz == 'on')" />
+</launch>
