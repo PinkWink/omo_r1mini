@@ -1,5 +1,5 @@
 motor_spec:
-    gear_ratio : 355
+    gear_ratio : 340
     wheel_base : 0.17
     wheel_radius : 0.03375
     enc_pulse : 44
