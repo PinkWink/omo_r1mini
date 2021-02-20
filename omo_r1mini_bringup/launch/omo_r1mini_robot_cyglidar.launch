@@ -21,10 +21,10 @@
         min_height: 0.0
         max_height: 1.0
         
-        angle_min: -1.0471973
-        angle_max: 1.0471973
-        angle_increment: 0.01745
-        scan_time: 0.06667
+        angle_min: -1.077958979
+        angle_max: 1.077958979
+        angle_increment: 0.01767
+        scan_time: 0.072
         range_min: 0.2
         range_max: 8.0
         use_inf: true
