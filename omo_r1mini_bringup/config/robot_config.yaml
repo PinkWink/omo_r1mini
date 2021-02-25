@@ -5,5 +5,5 @@ motor_spec:
     enc_pulse : 44
 
 use_imu_during_odom_calc:
-    use_imu : False
+    use_imu : True
     complementary_filter_coef : 0.5
