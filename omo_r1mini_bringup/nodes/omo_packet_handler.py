@@ -82,7 +82,7 @@ class PacketHandler:
          self.write_port("$cREGI," + str(idx) + "," + each)
 
       self.update_battery_state()
-      self.write_port("$cPERI,100")
+      self.write_port("$cPERI,50")
       sleep(0.01)
       self.write_port("$ENCOD,0")
       self.write_port("$cPEEN,1")

@@ -73,7 +73,9 @@ class ComplementaryFilter():
 class OMOR1miniNode:
     def __init__(self):
         self.ph = PacketHandler()
-        self.ph.stop_periodic_comm()  
+        self.ph.ser.flushInput() 
+        self.ph.stop_periodic_comm() 
+        self.ph.ser.flushInput()  
         self.calc_yaw = ComplementaryFilter()
 
         self.max_lin_vel_x = 1.2
