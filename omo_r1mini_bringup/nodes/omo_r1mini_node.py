@@ -73,9 +73,9 @@ class ComplementaryFilter():
 class OMOR1miniNode:
     def __init__(self):
         self.ph = PacketHandler()
-        self.ph.ser.flushInput() 
+        self.ph.ser.reset_input_buffer() 
+        self.ph.ser.reset_output_buffer() 
         self.ph.stop_periodic_comm() 
-        self.ph.ser.flushInput()  
         self.calc_yaw = ComplementaryFilter()
 
         self.max_lin_vel_x = 1.2
@@ -120,9 +120,6 @@ class OMOR1miniNode:
         self.odom_pub = rospy.Publisher("odom", Odometry, queue_size=10)
         self.odom_broadcaster = TransformBroadcaster()
 
-        self.ph.ser.flushInput()
-        self.ph.stop_periodic_comm()
-        self.ph.ser.flushInput()
         self.ph.update_battery_state()
         self.ph.set_periodic_info()
 
