@@ -1,0 +1,7 @@
+<launch>
+  <!-- launching state publishers -->
+  <include file="$(find omo_r1mini_description)/launch/description_hlds.launch"/>
+
+  <!-- launching gmapping node and parameters -->
+  <include file="$(find omo_r1mini_slam)/launch/omo_r1mini_gmapping.launch"/>
+</launch>
