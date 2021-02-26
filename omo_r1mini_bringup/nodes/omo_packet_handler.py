@@ -16,6 +16,8 @@ class PacketHandler:
                                        line_buffering = True)
 
       self.stop_periodic_comm()
+      self.ser.reset_input_buffer() 
+      self.ser.reset_output_buffer() 
 
       self.robot_state = {
             "ENCOD" : [0., 0.],
