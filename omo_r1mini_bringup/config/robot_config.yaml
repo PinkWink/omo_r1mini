@@ -1,7 +1,7 @@
 motor_spec:
     gear_ratio : 213
     wheel_base : 0.160
-    wheel_radius : 0.034
+    wheel_radius : 0.034 
     enc_pulse : 44
 
 use_imu_during_odom_calc:
