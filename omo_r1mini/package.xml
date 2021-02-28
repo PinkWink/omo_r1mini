@@ -15,6 +15,7 @@
   <exec_depend>omo_r1mini_navigation</exec_depend>
   <exec_depend>omo_r1mini_slam</exec_depend>
   <exec_depend>omo_r1mini_teleop</exec_depend>
+  <exec_depend>omo_r1mini_ar_marker</exec_depend>
   <exec_depend>ydlidar</exec_depend>
   <export><metapackage/></export>
 </package>

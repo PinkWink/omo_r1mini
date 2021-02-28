@@ -1,0 +1,7 @@
+<launch>
+  <!-- <include file="$(find omo_r1_image_recognition)/launch/omo_r1_ar_track.launch"/> -->
+
+  <include file="$(find omo_r1mini_description)/launch/description.launch"/>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find omo_r1mini_ar_marker)/rviz/ar_track.rviz"/>
+</launch>
