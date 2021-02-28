@@ -8,7 +8,7 @@
     <param name="height" value="480"/>
     <param name="fps" value="60"/>
 
-    <param name="camera_frame_id" value="camera_frame"/>
+    <param name="camera_frame_id" value="main_camera_optical"/>
     <param name="io_method" value="mmap"/>
   </node>
 </launch>
