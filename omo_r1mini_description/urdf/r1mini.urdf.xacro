@@ -202,6 +202,6 @@
     <parent link="base_link"/>
     <child link="camera_frame"/>
   </joint>
-  <link name="camera_frame"/>
+  <link name="main_camera_optical"/>
 
 </robot>
