@@ -17,5 +17,6 @@
   <exec_depend>omo_r1mini_teleop</exec_depend>
   <exec_depend>omo_r1mini_ar_marker</exec_depend>
   <exec_depend>ydlidar</exec_depend>
+  <exec_depend>omo_r1mini_simple_position_controller</exec_depend>
   <export><metapackage/></export>
 </package>

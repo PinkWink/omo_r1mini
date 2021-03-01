@@ -1,6 +1,6 @@
 motor_spec:
     gear_ratio : 213
-    wheel_base : 0.160
+    wheel_base : 0.150
     wheel_radius : 0.034 
     enc_pulse : 44
 
