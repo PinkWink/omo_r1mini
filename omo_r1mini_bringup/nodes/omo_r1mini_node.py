@@ -125,6 +125,8 @@ class OMOR1miniNode:
 
         sleep(0.1)
 
+        self.ph.set_periodic_info()
+
         rospy.loginfo('==> Start R1mini ')
         rospy.Timer(rospy.Duration(0.01), self.update_robot)
         self.odom_pose.timestamp = rospy.Time.now()

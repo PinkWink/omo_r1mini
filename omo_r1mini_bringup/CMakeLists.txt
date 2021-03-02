@@ -16,8 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   geometry_msgs
   tf
-  usb_cam
   message_generation
+  #usb_cam
   #omo_r1mini_description
 )
 
@@ -62,6 +62,7 @@ catkin_package(
 # Install
 ################################################################################
 catkin_install_python(PROGRAMS
+  nodes/omo_packet_handler.py
   nodes/omo_r1mini_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
