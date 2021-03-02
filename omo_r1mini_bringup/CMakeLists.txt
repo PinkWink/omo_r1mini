@@ -26,6 +26,7 @@ add_service_files(
   Battery.srv
   Color.srv
   SaveColor.srv
+  ResetOdom.srv
 )
 
 

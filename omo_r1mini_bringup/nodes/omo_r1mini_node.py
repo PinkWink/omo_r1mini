@@ -14,6 +14,7 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 from omo_r1mini_bringup.srv import Battery, BatteryResponse
 from omo_r1mini_bringup.srv import Color, ColorResponse
 from omo_r1mini_bringup.srv import SaveColor, SaveColorResponse
+from omo_r1mini_bringup.srv import ResetOdom, ResetOdomResponse
 
 class OdomPose(object):
     x = 0.0
@@ -114,6 +115,8 @@ class OMOR1miniNode:
         rospy.Service('battery_status', Battery, self.battery_service_handle)
         rospy.Service('set_led_color', Color, self.led_color_service_handle)
         rospy.Service('save_led_color', Color, self.save_led_color_service_handle)
+        rospy.Service('reset_odom', ResetOdom, self.reset_odom_handle)
+
         rospy.Subscriber("cmd_vel", Twist, self.sub_cmd_vel, queue_size=1)
 
         self.pub_joint_states = rospy.Publisher('joint_states', JointState, queue_size=10)
@@ -252,6 +255,13 @@ class OMOR1miniNode:
         command = "$sCOLOR," + str(req.red) + ',' + str(req.green) + ',' + str(req.blue)
         self.ph.write_port(command)
         return ColorResponse()
+
+    def reset_odom_handle(self, req):
+        self.odom_pose.x = req.x
+        self.odom_pose.y = req.y
+        self.odom_pose.theta = req.theta
+
+        return ResetOdomResponse()
 
     def main(self):
         rospy.spin()

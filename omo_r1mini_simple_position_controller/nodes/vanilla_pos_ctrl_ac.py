@@ -11,6 +11,7 @@ from tf.transformations import euler_from_quaternion
 
 import actionlib
 import omo_r1mini_simple_position_controller.msg
+from omo_r1mini_bringup.srv import ResetOdom, ResetOdomResponse
 
 def calc_errors(cur_pos, goal):
     delta_y_ref = goal.y - cur_pos.y
@@ -52,7 +53,15 @@ def execute_cb(goal):
 
         pub.publish(speed)
 
-        if abs(e_s) < 0.01:
+        if abs(e_s) < 0.02:
+            try:
+                rospy.wait_for_service('reset_odom')
+                reset_odom = rospy.ServiceProxy('reset_odom', ResetOdom)
+                reset_odom(0., 0., 0.)
+                rospy.loginfo('Robot Odom is reset to (x, y, theta) = (0, 0, 0)')
+            except rospy.ServiceException as e:
+                print("Service call failed: %s"%e)
+
             break
 
         rate.sleep() 
