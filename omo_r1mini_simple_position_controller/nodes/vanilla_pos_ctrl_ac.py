@@ -36,6 +36,8 @@ def robot_odom_sub(msg):
 def execute_cb(goal):
     global cur_pos, pub, speed
 
+    rospy.loginfo('Start vanilla position control to (x, y) = (%1.2f, %1.2f)', goal.x, goal.y)
+
     rate = rospy.Rate(50)
     progress = True
 
@@ -54,6 +56,9 @@ def execute_cb(goal):
         pub.publish(speed)
 
         if abs(e_s) < 0.02:
+            rospy.loginfo('Complete vanilla position control to (x, y) = (%1.2f, %1.2f)', goal.x, goal.y)
+            rospy.loginfo('Residue Error is (translation, rotation(deg)) = (%1.2f, %1.2f)',
+                                                            feedback.error_s, feedback.error_theta)
             try:
                 rospy.wait_for_service('reset_odom')
                 reset_odom = rospy.ServiceProxy('reset_odom', ResetOdom)
