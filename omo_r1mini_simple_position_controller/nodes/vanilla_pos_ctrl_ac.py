@@ -16,9 +16,13 @@ from omo_r1mini_bringup.srv import ResetOdom, ResetOdomResponse
 def calc_errors(cur_pos, goal):
     delta_y_ref = goal.y - cur_pos.y
     delta_x_ref = goal.x - cur_pos.x
-    goal.theta = atan2(delta_y_ref, delta_x_ref)
 
-    e_s = sqrt(delta_x_ref**2 + delta_y_ref**2) * cos( atan2(delta_y_ref, delta_x_ref) - cur_pos.theta )
+    if ((goal.x == 0.) and (goal.y == 0.)):
+        e_s = 0.
+    else:
+        goal.theta = atan2(delta_y_ref, delta_x_ref)
+        e_s = sqrt(delta_x_ref**2 + delta_y_ref**2) * cos( atan2(delta_y_ref, delta_x_ref) - cur_pos.theta )
+    
     e_theta = goal.theta - cur_pos.theta
 
     return e_s, e_theta
@@ -34,7 +38,7 @@ def robot_odom_sub(msg):
     cur_pos.theta = theta
 
 def execute_cb(goal):
-    global cur_pos, pub, speed
+    global cur_pos, pub, speed, dist_stop_condition
 
     rospy.loginfo('Start vanilla position control to (x, y) = (%1.2f, %1.2f)', goal.x, goal.y)
 
@@ -55,7 +59,7 @@ def execute_cb(goal):
 
         pub.publish(speed)
 
-        if abs(e_s) < 0.02:
+        if ((abs(e_s) < dist_stop_condition) and ((abs(e_theta)) < rotational_stop_condition)):
             rospy.loginfo('Complete vanilla position control to (x, y) = (%1.2f, %1.2f)', goal.x, goal.y)
             rospy.loginfo('Residue Error is (translation, rotation(deg)) = (%1.2f, %1.2f)',
                                                             feedback.error_s, feedback.error_theta)
@@ -86,16 +90,19 @@ if __name__ == '__main__':
     speed = Twist()
 
     theta_PID = PID.PID()
-    theta_PID.P = 0.4
-    theta_PID.I = 0.001
-    theta_PID.max_state = 0.5
-    theta_PID.min_state = -0.5
+    theta_PID.P = rospy.get_param("/rotational_PID/P")
+    theta_PID.I = rospy.get_param("/rotational_PID/I")
+    theta_PID.max_state = rospy.get_param("/rotational_PID/max_state")
+    theta_PID.min_state = rospy.get_param("/rotational_PID/min_state")
 
     translation_PID = PID.PID()
-    translation_PID.P = 0.1
-    translation_PID.I = 0.001
-    translation_PID.max_state = 0.2
-    translation_PID.min_state = -0.1
+    translation_PID.P = rospy.get_param("/translation_PID/P")
+    translation_PID.I = rospy.get_param("/translation_PID/I")
+    translation_PID.max_state = rospy.get_param("/translation_PID/max_state")
+    translation_PID.min_state = rospy.get_param("/translation_PID/min_state")
+
+    dist_stop_condition = rospy.get_param("/robot_stop/dist_stop_condition")
+    rotational_stop_condition = rospy.get_param("/robot_stop/rotational_stop_condition")
     
     pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
