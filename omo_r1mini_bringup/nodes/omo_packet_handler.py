@@ -70,12 +70,14 @@ class PacketHandler:
          key = raw_data_split[0]
       except AttributeError:
          rospy.logwarn("AttributeError: 'NoneType' object has no attribute 'replace' : %s ")
+         self.write_port("$cPEEN,1")
 
       if key in list(self.robot_state.keys()):
          try:
             self.robot_state[key] = [float(each) for each in raw_data_split[1:]]
          except ValueError:
             rospy.logwarn("ValueError occupied in parser_R1mini. %s ", raw_data_o)
+            self.write_port("$cPEEN,1")
 
       return raw_data_o
 
@@ -84,9 +86,11 @@ class PacketHandler:
          self.write_port("$cREGI," + str(idx) + "," + each)
 
       self.update_battery_state()
-      self.write_port("$cPERI,50")
+      self.write_port("$cPERI,100")
       sleep(0.01)
       self.write_port("$ENCOD,0")
+      self.write_port("$cPEEN,1")
+      sleep(0.01)
       self.write_port("$cPEEN,1")
 
    def stop_periodic_comm(self):

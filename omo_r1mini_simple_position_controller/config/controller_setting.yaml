@@ -14,4 +14,4 @@ translation_PID:
 
 robot_stop:
     dist_stop_condition : 0.02
-    rotational_stop_condition : 0.05
+    rotational_stop_condition : 0.02
