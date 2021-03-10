@@ -1,9 +1,8 @@
 <launch>
   <!-- Arguments -->
   <arg name="map_file" default="$(find omo_r1mini_navigation)/maps/map.yaml"/>
-  <arg name="move_forward_only" default="false"/>
+  <arg name="move_forward_only" default="true"/>
 
-  <!-- OMO R1 -->
   <include file="$(find omo_r1mini_description)/launch/description_cyglidar.launch"/>
 
   <!-- Map server -->
