@@ -7,7 +7,7 @@
     <param name="width" value="1280"/>
     <param name="height" value="720"/>
     <param name="fps" value="60"/>
-    <param name="flip_method" value="2" />
+    <param name="flip_method" value="0" />
 
     <param name="camera_frame_id" value="main_camera_optical"/>
     <param name="io_method" value="mmap"/>
