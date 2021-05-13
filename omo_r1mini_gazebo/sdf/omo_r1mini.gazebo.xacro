@@ -88,7 +88,7 @@
     </plugin>
   </gazebo>
 
-    <gazebo reference="camera_link">
+    <gazebo reference="main_camera_optical">
     <sensor type="camera" name="camera1">
       <update_rate>15.0</update_rate>
       <camera name="head">
