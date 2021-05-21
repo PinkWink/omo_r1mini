@@ -117,7 +117,7 @@ class OMOR1miniNode:
         rospy.Service('set_led_color', Color, self.led_color_service_handle)
         rospy.Service('save_led_color', Color, self.save_led_color_service_handle)
         rospy.Service('reset_odom', ResetOdom, self.reset_odom_handle)
-        rospy.Service('reset_odom', Calg, self.calibrate_IMU)
+        rospy.Service('calibrate_gyro', Calg, self.calibrate_gyro)
 
         rospy.Subscriber("cmd_vel", Twist, self.sub_cmd_vel, queue_size=1)
 
@@ -267,7 +267,7 @@ class OMOR1miniNode:
 
         return ResetOdomResponse()
 
-    def calibrate_IMU(self, req):
+    def calibrate_gyro(self, req):
         command = "$qCALG,1"
         self.ph.write_port(command)
         return CalgResponse()
