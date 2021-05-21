@@ -92,7 +92,7 @@ class OMOR1miniNode:
             "BAT" : [0., 0., 0.],
         } 
 
-        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "POSE", "ACCL"]
+        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "ACCL"]
 
         self.odom_pose = OdomPose()
         self.odom_vel = OdomVel()
@@ -219,8 +219,7 @@ class OMOR1miniNode:
             [odo_l, odo_r] = self.ph.robot_state['ODO']
             [vel_x, vel_y, vel_z] = self.ph.robot_state['GYRO']
             [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
-            [roll_imu, pitch_imu, yaw_imu] = self.ph.robot_state['POSE']
-            print(yaw_imu)
+            # [roll_imu, pitch_imu, yaw_imu] = self.ph.robot_state['POSE']
 
             self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, vel_z)
             self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
