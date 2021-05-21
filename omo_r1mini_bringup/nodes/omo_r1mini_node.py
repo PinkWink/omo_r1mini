@@ -15,6 +15,7 @@ from omo_r1mini_bringup.srv import Battery, BatteryResponse
 from omo_r1mini_bringup.srv import Color, ColorResponse
 from omo_r1mini_bringup.srv import SaveColor, SaveColorResponse
 from omo_r1mini_bringup.srv import ResetOdom, ResetOdomResponse
+from omo_r1mini_bringup.srv import Calg, CalgResponse
 
 class OdomPose(object):
     x = 0.0
@@ -87,11 +88,11 @@ class OMOR1miniNode:
             "ODO" : [0., 0.],
             "ACCL" : [0., 0., 0.],
             "GYRO" : [0., 0., 0.],
-            "POSE" : [0., 0.],
+            "POSE" : [0., 0., 0.],
             "BAT" : [0., 0., 0.],
         } 
 
-        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "ACCL"]
+        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "ACCL", "POSE"]
 
         self.odom_pose = OdomPose()
         self.odom_vel = OdomVel()
@@ -116,6 +117,7 @@ class OMOR1miniNode:
         rospy.Service('set_led_color', Color, self.led_color_service_handle)
         rospy.Service('save_led_color', Color, self.save_led_color_service_handle)
         rospy.Service('reset_odom', ResetOdom, self.reset_odom_handle)
+        rospy.Service('reset_odom', Calg, self.calibrate_IMU)
 
         rospy.Subscriber("cmd_vel", Twist, self.sub_cmd_vel, queue_size=1)
 
@@ -217,6 +219,8 @@ class OMOR1miniNode:
             [odo_l, odo_r] = self.ph.robot_state['ODO']
             [vel_x, vel_y, vel_z] = self.ph.robot_state['GYRO']
             [acc_x, acc_y, acc_z] = self.ph.robot_state['ACCL']
+            [roll_imu, pitch_imu, yaw_imu] = self.ph.robot_state['POSE']
+            print(yaw_imu)
 
             self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, vel_z)
             self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
@@ -262,6 +266,12 @@ class OMOR1miniNode:
         self.odom_pose.theta = req.theta
 
         return ResetOdomResponse()
+
+    def calibrate_IMU(self, req):
+        command = "$qCALG,1"
+        self.ph.write_port(command)
+        return CalgResponse()
+
 
     def main(self):
         rospy.spin()
