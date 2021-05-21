@@ -92,7 +92,7 @@ class OMOR1miniNode:
             "BAT" : [0., 0., 0.],
         } 
 
-        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "ACCL", "POSE"]
+        self.ph.incomming_info = ['ODO', 'VW', "GYRO", "POSE", "ACCL"]
 
         self.odom_pose = OdomPose()
         self.odom_vel = OdomVel()
