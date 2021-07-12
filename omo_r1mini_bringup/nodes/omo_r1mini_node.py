@@ -15,7 +15,7 @@ from omo_r1mini_bringup.srv import Battery, BatteryResponse
 from omo_r1mini_bringup.srv import Color, ColorResponse
 from omo_r1mini_bringup.srv import SaveColor, SaveColorResponse
 from omo_r1mini_bringup.srv import ResetOdom, ResetOdomResponse
-from omo_r1mini_bringup.srv import Calg, CalgResponse
+#from omo_r1mini_bringup.srv import Calg, CalgResponse
 
 class OdomPose(object):
     x = 0.0
@@ -117,7 +117,7 @@ class OMOR1miniNode:
         rospy.Service('set_led_color', Color, self.led_color_service_handle)
         rospy.Service('save_led_color', Color, self.save_led_color_service_handle)
         rospy.Service('reset_odom', ResetOdom, self.reset_odom_handle)
-        rospy.Service('calibrate_gyro', Calg, self.calibrate_gyro)
+        #rospy.Service('calibrate_gyro', Calg, self.calibrate_gyro)
 
         rospy.Subscriber("cmd_vel", Twist, self.sub_cmd_vel, queue_size=1)
 
@@ -266,10 +266,10 @@ class OMOR1miniNode:
 
         return ResetOdomResponse()
 
-    def calibrate_gyro(self, req):
-        command = "$qCALG,1"
-        self.ph.write_port(command)
-        return CalgResponse()
+    # def calibrate_gyro(self, req):
+    #     command = "$qCALG,1"
+    #     self.ph.write_port(command)
+    #     return CalgResponse()
 
 
     def main(self):
